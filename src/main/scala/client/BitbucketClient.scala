@@ -13,7 +13,7 @@ import zio.*
 
 trait BitbucketClient:
   def listPullRequests(
-      state: PullRequestState,
+      state: Set[PullRequestState],
       count: RequestedCount
   ): ZIO[Scope, BitBucketApiError, List[PullRequestResponse]]
 
@@ -24,7 +24,10 @@ trait BitbucketClient:
   ]]
 
 object BitbucketClient:
-  def listPullRequests(state: PullRequestState, count: RequestedCount): ZIO[
+  def listPullRequests(
+      state: Set[PullRequestState],
+      count: RequestedCount
+  ): ZIO[
     BitbucketClient & Scope,
     BitBucketApiError,
     List[PullRequestResponse]

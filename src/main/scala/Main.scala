@@ -56,8 +56,8 @@ object Main extends ZIOAppDefault {
   private val app =
     for
       total <- CrawlingService.fetchPullRequestActivityAndSave(
-        PullRequestState.Merged,
-        RequestedCount.Fixed(10)
+        PullRequestState.default,
+        RequestedCount.Fixed(20)
       )
       _ <- Console.printLine(s"Total activities fetched: $total")
     yield ()

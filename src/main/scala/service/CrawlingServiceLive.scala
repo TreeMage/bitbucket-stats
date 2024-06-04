@@ -68,7 +68,7 @@ case class CrawlingServiceLive(
     yield activities.length
 
   override def fetchPullRequestActivityAndSave(
-      state: PullRequestState,
+      state: Set[PullRequestState],
       count: RequestedCount
   ): ZIO[Scope, CrawlingError, Int] =
     for

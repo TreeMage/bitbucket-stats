@@ -14,13 +14,13 @@ enum CrawlingError:
 
 trait CrawlingService:
   def fetchPullRequestActivityAndSave(
-      state: PullRequestState,
+      state: Set[PullRequestState],
       count: RequestedCount
   ): ZIO[Scope, CrawlingError, Int]
 
 object CrawlingService:
   def fetchPullRequestActivityAndSave(
-      state: PullRequestState,
+      state: Set[PullRequestState],
       count: RequestedCount
   ): ZIO[Scope & CrawlingService, CrawlingError, Int] =
     for

@@ -1,14 +1,14 @@
 package org.treemage
 package model.response.pullrequest
 
-import zio.http.codec.QueryCodec
 import zio.schema.Schema
-import zio.schema.codec.BinaryCodec
 
 enum PullRequestState:
   case Open, Merged, Declined, Superseded
 
 object PullRequestState:
+  val default: Set[PullRequestState] = Set(Open, Merged)
+
   given Schema[PullRequestState] = Schema[String].transform(
     v => PullRequestState.valueOf(v.toLowerCase.capitalize),
     _.toString.toUpperCase
