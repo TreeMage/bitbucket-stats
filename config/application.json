@@ -1,0 +1,14 @@
+{
+  "bitbucket": {
+    "repository": "takeoff-ui-wolf",
+    "workspace": "modulize-io",
+    "accessToken": "<TOKEN>"
+  },
+  "postgres": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "bitbucket-db",
+    "username": "postgres",
+    "password": "postgres"
+  }
+}
