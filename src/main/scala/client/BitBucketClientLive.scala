@@ -53,7 +53,7 @@ private case class BitBucketClientLive(client: Client, config: BitbucketConfig)
     yield result._2.reverse
 
   override def listPullRequests(
-      state: PullRequestState,
+      state: Set[PullRequestState],
       count: RequestedCount
   ): ZIO[Scope, BitBucketApiError, List[PullRequestResponse]] =
     val url = s"$BASE_URL/pullrequests"
@@ -66,7 +66,10 @@ private case class BitBucketClientLive(client: Client, config: BitbucketConfig)
           pages.map(_.values.length).sum < target
 
     def makeRequest(url: String) =
-      makeBaseRequest(url).addQueryParam("state", state.asQueryParam)
+      makeBaseRequest(url).addQueryParam(
+        "state",
+        state.map(_.asQueryParam).mkString(",")
+      )
 
     for responses <- fetchUntil[BitBucketPullRequestResponse](
         url,

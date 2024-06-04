@@ -5,6 +5,6 @@ I am not sure where this project will go yet. For now, it fetches pull request a
 In the future, I think I want to add some analytics capabilities on top of this data and then maybe add a frontend in ScalaJS?
 
 ### TODO
-- Only refetch activity for PRs that have been updated since the last fetch
-- Allow retrieving prs in any state
-- Add some logging
+- [ ] Only refetch activity for PRs that have been updated since the last fetch
+- [x] Allow retrieving prs in any state
+- [ ] Add some logging
