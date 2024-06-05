@@ -13,7 +13,13 @@ import org.treemage.repository.{
   BitBucketUserRepositoryLive,
   QuillLayer
 }
-import org.treemage.service.{CrawlingService, CrawlingServiceLive}
+import org.treemage.service.{
+  ActivityServiceLive,
+  CrawlingService,
+  CrawlingServiceLive,
+  PullRequestServiceLive,
+  UserServiceLive
+}
 import zio.*
 import zio.config.typesafe.*
 import zio.http.*
@@ -68,6 +74,9 @@ object Main extends ZIOAppDefault {
       BitBucketUserRepositoryLive.layer,
       BitBucketPullRequestRepositoryLive.layer,
       BitBucketPullRequestActivityRepositoryLive.layer,
+      UserServiceLive.layer,
+      PullRequestServiceLive.layer,
+      ActivityServiceLive.layer,
       QuillLayer.live,
       BitBucketClientLive.layer,
       CrawlingServiceLive.layer,

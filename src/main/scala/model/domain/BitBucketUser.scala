@@ -1,13 +1,12 @@
 package org.treemage
 package model.domain
 
+import model.db.BitBucketUserDB
 import model.response.BitBucketUserResponse
-
-import org.treemage.model.db.BitBucketUserDB
 
 import java.util.UUID
 
-case class BitBucketUser(id: UUID, displayName: String, accountId: String)
+case class BitBucketUser(id: UUID, name: String, accountId: String)
 
 object BitBucketUser:
   def fromAPIResponse(response: BitBucketUserResponse): Option[BitBucketUser] =
@@ -17,7 +16,13 @@ object BitBucketUser:
       response.display_name,
       response.account_id
     )
+  def fromDB(db: BitBucketUserDB): BitBucketUser =
+    BitBucketUser(
+      db.id,
+      db.name,
+      db.accountId
+    )
 
   extension (self: BitBucketUser)
     def toDB: BitBucketUserDB =
-      BitBucketUserDB(self.id, self.displayName, self.accountId)
+      BitBucketUserDB(self.id, self.name, self.accountId)

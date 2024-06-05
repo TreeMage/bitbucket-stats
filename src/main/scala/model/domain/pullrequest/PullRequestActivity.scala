@@ -1,7 +1,11 @@
 package org.treemage
 package model.domain.pullrequest
 
-import model.db.{ActivityType, BitBucketActivityDBForInsert}
+import model.db.{
+  ActivityType,
+  BitBucketActivityDB,
+  BitBucketActivityDBForInsert
+}
 import model.domain.*
 import model.domain.BitBucketUser
 import model.response.pullrequest.PullRequestActivityResponseValueWrapper
@@ -76,6 +80,31 @@ object PullRequestActivity:
         Update(
           pullRequest.id,
           date,
+          author
+        )
+
+  def fromDB(
+      db: BitBucketActivityDB,
+      author: BitBucketUser
+  ): PullRequestActivity =
+    db.activityType match
+      case ActivityType.Approval =>
+        Approval(
+          db.pullRequestId,
+          db.createdAt,
+          author
+        )
+      case ActivityType.Comment =>
+        Comment(
+          db.pullRequestId,
+          db.id,
+          db.createdAt,
+          author
+        )
+      case ActivityType.Update =>
+        Update(
+          db.pullRequestId,
+          db.createdAt,
           author
         )
 

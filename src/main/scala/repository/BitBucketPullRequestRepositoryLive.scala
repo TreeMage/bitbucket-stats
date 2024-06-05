@@ -19,7 +19,7 @@ case class BitBucketPullRequestRepositoryLive(quill: Quill.Postgres[SnakeCase])
     for result <- run(Schema.pullRequests.filter(_.id == lift(id)))
     yield result.headOption
 
-  override def create(
+  override def createOrUpdate(
       pullRequest: BitBucketPullRequestDB
   ): ZIO[Any, SQLException, Int] =
     for r <- run(
