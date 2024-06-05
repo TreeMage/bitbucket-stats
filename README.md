@@ -7,4 +7,4 @@ In the future, I think I want to add some analytics capabilities on top of this 
 ### TODO
 - [ ] Only refetch activity for PRs that have been updated since the last fetch
 - [x] Allow retrieving prs in any state
-- [ ] Add some logging
+- [x] Add some logging
