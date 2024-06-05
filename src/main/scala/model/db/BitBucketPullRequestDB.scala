@@ -9,5 +9,6 @@ case class BitBucketPullRequestDB(
     title: String,
     state: String,
     createdAt: LocalDateTime,
+    updatedAt: LocalDateTime,
     authorId: UUID
 )

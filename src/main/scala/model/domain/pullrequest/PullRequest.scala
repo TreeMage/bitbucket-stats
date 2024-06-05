@@ -1,23 +1,18 @@
 package org.treemage
 package model.domain.pullrequest
 
-import org.treemage.model.db.BitBucketPullRequestDB
-import org.treemage.model.domain.{BitBucketUser, parseBitBucketDateTime}
-import org.treemage.model.response.pullrequest.{
-  PullRequestResponse,
-  PullRequestState
-}
+import model.db.BitBucketPullRequestDB
+import model.domain.{BitBucketUser, parseBitBucketDateTime}
+import model.response.pullrequest.{PullRequestResponse, PullRequestState}
 
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import scala.util.Try
 
 case class PullRequest(
     id: Int,
     title: String,
     state: PullRequestState,
     createdAt: LocalDateTime,
+    updatedAt: LocalDateTime,
     author: BitBucketUser
 )
 
@@ -25,12 +20,14 @@ object PullRequest:
   def fromAPIResponse(response: PullRequestResponse): Option[PullRequest] =
     for
       createdAt <- parseBitBucketDateTime(response.created_on)
+      updatedAt <- parseBitBucketDateTime(response.updated_on)
       author <- BitBucketUser.fromAPIResponse(response.author)
     yield PullRequest(
       response.id,
       response.title,
       response.state,
       createdAt,
+      updatedAt,
       author
     )
 
@@ -41,5 +38,6 @@ object PullRequest:
         self.title,
         self.state.asString,
         self.createdAt,
+        self.updatedAt,
         self.author.id
       )
