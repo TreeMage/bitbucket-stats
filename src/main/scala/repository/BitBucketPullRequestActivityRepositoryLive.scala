@@ -22,6 +22,15 @@ case class BitBucketPullRequestActivityRepositoryLive(
     for result <- run(Schema.activities.filter(_.id == lift(id)))
     yield result.headOption
 
+  override def getByPullRequestId(
+      pullRequestId: Index
+  ): ZIO[Any, SQLException, List[BitBucketActivityDB]] =
+    run(
+      Schema.activities
+        .filter(_.pullRequestId == lift(pullRequestId))
+        .sortBy(_.createdAt)(Ord.desc)
+    )
+
   override def create(
       pullRequestActivity: BitBucketActivityDBForInsert
   ): ZIO[Any, SQLException, Int] =

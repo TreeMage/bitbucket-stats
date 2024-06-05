@@ -3,7 +3,10 @@ package model.domain.pullrequest
 
 import model.db.BitBucketPullRequestDB
 import model.domain.{BitBucketUser, parseBitBucketDateTime}
-import model.response.pullrequest.{PullRequestResponse, PullRequestState}
+import org.treemage.model.response.bitbucket.pullrequest.{
+  PullRequestResponse,
+  PullRequestState
+}
 
 import java.time.LocalDateTime
 

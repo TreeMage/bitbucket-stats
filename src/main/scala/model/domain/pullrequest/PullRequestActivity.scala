@@ -8,7 +8,7 @@ import model.db.{
 }
 import model.domain.*
 import model.domain.BitBucketUser
-import model.response.pullrequest.PullRequestActivityResponseValueWrapper
+import org.treemage.model.response.bitbucket.pullrequest.PullRequestActivityResponseValueWrapper
 
 import java.time.LocalDateTime
 

@@ -1,5 +1,5 @@
 package org.treemage
-package model.response
+package model.response.bitbucket
 
 import zio.schema.{DeriveSchema, Schema}
 

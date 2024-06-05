@@ -2,7 +2,7 @@ package org.treemage
 package model.domain
 
 import model.db.BitBucketUserDB
-import model.response.BitBucketUserResponse
+import org.treemage.model.response.bitbucket.BitBucketUserResponse
 
 import java.util.UUID
 

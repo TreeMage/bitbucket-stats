@@ -2,8 +2,8 @@ package org.treemage
 package client
 
 import model.RequestedCount
-import model.response.BitBucketApiError
-import model.response.pullrequest.{
+import org.treemage.model.response.bitbucket.BitBucketApiError
+import org.treemage.model.response.bitbucket.pullrequest.{
   PullRequestActivityResponseValueWrapper,
   PullRequestResponse,
   PullRequestState

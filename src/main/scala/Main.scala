@@ -3,7 +3,7 @@ package org.treemage
 import org.treemage.client.{BitBucketClientLive, BitbucketClient}
 import org.treemage.config.{ApplicationConfig, BitbucketConfig}
 import org.treemage.model.RequestedCount
-import org.treemage.model.response.pullrequest.{
+import org.treemage.model.response.bitbucket.pullrequest.{
   PullRequestActivityResponse,
   PullRequestState
 }
@@ -70,7 +70,8 @@ object Main extends ZIOAppDefault {
 
   def run: ZIO[ZIOAppArgs, Any, Any] =
     app.provide(
-      config,
+      config.project(_.bitbucket),
+      config.project(_.postgres),
       BitBucketUserRepositoryLive.layer,
       BitBucketPullRequestRepositoryLive.layer,
       BitBucketPullRequestActivityRepositoryLive.layer,

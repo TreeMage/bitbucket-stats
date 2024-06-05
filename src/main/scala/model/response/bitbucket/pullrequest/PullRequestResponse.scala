@@ -1,8 +1,7 @@
 package org.treemage
-package model.response.pullrequest
+package model.response.bitbucket.pullrequest
 
-import model.response.BitBucketUserResponse
-
+import org.treemage.model.response.bitbucket.BitBucketUserResponse
 import zio.schema.{DeriveSchema, Schema}
 
 case class PullRequestResponse(
