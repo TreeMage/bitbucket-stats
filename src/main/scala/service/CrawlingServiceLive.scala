@@ -72,9 +72,11 @@ case class CrawlingServiceLive(
       count: RequestedCount
   ): ZIO[Scope, CrawlingError, Int] =
     for
+      _ <- ZIO.logInfo(s"Fetching PRs with state $state and count $count")
       prs <- bitbucketClient
         .listPullRequests(state, count)
         .mapError(CrawlingError.APIError.apply)
+      _ <- ZIO.logInfo(s"Found ${prs.length} PRs")
       total <- ZIO
         .foreachPar(prs) { prResponse =>
           for
@@ -87,10 +89,15 @@ case class CrawlingServiceLive(
                   )
                 )
               )
+            _ <- ZIO.logInfo(s"Deleting activities for PR ${pr.id}")
             _ <- bitBucketPullRequestActivityRepository
               .deleteByPullRequestId(pr.id)
               .mapError(CrawlingError.PersistenceError.apply)
+            _ <- ZIO.logInfo(s"Fetching and saving activities for PR ${pr.id}")
             numberOfActivities <- fetchAndSaveActivities(pr)
+            _ <- ZIO.logInfo(
+              s"Saved $numberOfActivities activities for PR ${pr.id}"
+            )
           yield numberOfActivities
         }
         .map(_.sum)
