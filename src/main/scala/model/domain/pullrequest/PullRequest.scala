@@ -31,6 +31,20 @@ object PullRequest:
       author
     )
 
+  def fromDB(
+      db: BitBucketPullRequestDB,
+      author: BitBucketUser
+  ): Option[PullRequest] =
+    for state <- PullRequestState.parse(db.state)
+    yield PullRequest(
+      db.id,
+      db.title,
+      state,
+      db.createdAt,
+      db.updatedAt,
+      author
+    )
+
   extension (self: PullRequest)
     def toDB: BitBucketPullRequestDB =
       BitBucketPullRequestDB(

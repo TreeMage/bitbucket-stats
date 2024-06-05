@@ -15,37 +15,35 @@ import repository.{
 
 import zio.*
 
-private type Dependencies = BitBucketUserRepository &
-  BitBucketPullRequestRepository & BitBucketPullRequestActivityRepository &
+private type Dependencies = UserService & PullRequestService & ActivityService &
   BitbucketClient
 
 case class CrawlingServiceLive(
-    bitBucketUserRepository: BitBucketUserRepository,
-    bitBucketPullRequestRepository: BitBucketPullRequestRepository,
-    bitBucketPullRequestActivityRepository: BitBucketPullRequestActivityRepository,
+    bitBucketUserService: UserService,
+    bitBucketPullRequestService: PullRequestService,
+    bitBucketPullRequestActivityService: ActivityService,
     bitbucketClient: BitbucketClient
 ) extends CrawlingService:
 
   private def shouldRefetchActivities(
       pr: PullRequest
-  ): ZIO[Scope, CrawlingError, Boolean] =
+  ): ZIO[Scope, Nothing, Boolean] =
     for
-      storedPr <- bitBucketPullRequestRepository
+      storedPr <- bitBucketPullRequestService
         .getById(pr.id)
-        .mapError(CrawlingError.PersistenceError.apply)
       shoudlRefetch =
         storedPr.fold(true)(_.updatedAt.isBefore(pr.updatedAt))
     yield shoudlRefetch
 
   private def saveActivity(
       activity: PullRequestActivity
-  ): ZIO[Scope, CrawlingError, Unit] =
-    (for
-      _ <- bitBucketUserRepository
-        .createOrUpdate(activity.associatedUser.toDB)
-      _ <- bitBucketPullRequestActivityRepository
-        .create(activity.toDB)
-    yield ()).mapError(CrawlingError.PersistenceError.apply)
+  ): ZIO[Scope, Nothing, Unit] =
+    for
+      _ <- bitBucketUserService
+        .createOrUpdate(activity.associatedUser)
+      _ <- bitBucketPullRequestActivityService
+        .create(activity)
+    yield ()
 
   private def fetchActivities(
       prId: Int
@@ -68,12 +66,10 @@ case class CrawlingServiceLive(
       pr: PullRequest
   ): ZIO[Scope, CrawlingError, Int] =
     for
-      _ <- bitBucketUserRepository
-        .createOrUpdate(pr.author.toDB)
-        .mapError(CrawlingError.PersistenceError.apply)
-      _ <- bitBucketPullRequestRepository
-        .create(pr.toDB)
-        .mapError(CrawlingError.PersistenceError.apply)
+      _ <- bitBucketUserService
+        .createOrUpdate(pr.author)
+      _ <- bitBucketPullRequestService
+        .createOrUpdate(pr)
       activities <- fetchActivities(pr.id)
       _ <- ZIO.foreachDiscard(activities)(saveActivity)
     yield activities.length
@@ -107,9 +103,8 @@ case class CrawlingServiceLive(
                   _ <- ZIO.logInfo(
                     s"Refetching activities for PR ${pr.id}"
                   )
-                  _ <- bitBucketPullRequestActivityRepository
+                  _ <- bitBucketPullRequestActivityService
                     .deleteByPullRequestId(pr.id)
-                    .mapError(CrawlingError.PersistenceError.apply)
                   _ <- ZIO.logInfo(
                     s"Fetching and saving activities for PR ${pr.id}"
                   )
