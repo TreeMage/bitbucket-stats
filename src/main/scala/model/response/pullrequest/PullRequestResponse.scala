@@ -10,6 +10,7 @@ case class PullRequestResponse(
     title: String,
     state: PullRequestState,
     created_on: String,
+    updated_on: String,
     author: BitBucketUserResponse
 )
 

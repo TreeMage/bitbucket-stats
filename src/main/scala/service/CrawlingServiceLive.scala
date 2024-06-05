@@ -26,6 +26,17 @@ case class CrawlingServiceLive(
     bitbucketClient: BitbucketClient
 ) extends CrawlingService:
 
+  private def shouldRefetchActivities(
+      pr: PullRequest
+  ): ZIO[Scope, CrawlingError, Boolean] =
+    for
+      storedPr <- bitBucketPullRequestRepository
+        .getById(pr.id)
+        .mapError(CrawlingError.PersistenceError.apply)
+      shoudlRefetch =
+        storedPr.fold(true)(_.updatedAt.isBefore(pr.updatedAt))
+    yield shoudlRefetch
+
   private def saveActivity(
       activity: PullRequestActivity
   ): ZIO[Scope, CrawlingError, Unit] =
@@ -89,15 +100,28 @@ case class CrawlingServiceLive(
                   )
                 )
               )
-            _ <- ZIO.logInfo(s"Deleting activities for PR ${pr.id}")
-            _ <- bitBucketPullRequestActivityRepository
-              .deleteByPullRequestId(pr.id)
-              .mapError(CrawlingError.PersistenceError.apply)
-            _ <- ZIO.logInfo(s"Fetching and saving activities for PR ${pr.id}")
-            numberOfActivities <- fetchAndSaveActivities(pr)
-            _ <- ZIO.logInfo(
-              s"Saved $numberOfActivities activities for PR ${pr.id}"
-            )
+            shouldRefetch <- shouldRefetchActivities(pr)
+            numberOfActivities <-
+              if shouldRefetch then
+                for
+                  _ <- ZIO.logInfo(
+                    s"Refetching activities for PR ${pr.id}"
+                  )
+                  _ <- bitBucketPullRequestActivityRepository
+                    .deleteByPullRequestId(pr.id)
+                    .mapError(CrawlingError.PersistenceError.apply)
+                  _ <- ZIO.logInfo(
+                    s"Fetching and saving activities for PR ${pr.id}"
+                  )
+                  numberOfActivities <- fetchAndSaveActivities(pr)
+                  _ <- ZIO.logInfo(
+                    s"Saved $numberOfActivities activities for PR ${pr.id}"
+                  )
+                yield numberOfActivities
+              else
+                ZIO.logInfo(
+                  s"Skipping PR ${pr.id} since it has not been updated since the last crawl"
+                ) *> ZIO.succeed(0)
           yield numberOfActivities
         }
         .map(_.sum)
