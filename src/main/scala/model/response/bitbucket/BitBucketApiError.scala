@@ -1,5 +1,7 @@
 package org.treemage
-package model.response
+package model.response.bitbucket
+
+import model.response.bitbucket.BitBucketApiError
 
 enum BitBucketApiError:
   case RequestFailed(throwable: Throwable)

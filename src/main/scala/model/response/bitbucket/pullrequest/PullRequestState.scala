@@ -1,5 +1,5 @@
 package org.treemage
-package model.response.pullrequest
+package model.response.bitbucket.pullrequest
 
 import zio.schema.Schema
 

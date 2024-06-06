@@ -23,6 +23,10 @@ case class BitBucketUserRepositoryLive(quill: Quill.Postgres[SnakeCase])
     for result <- run(Schema.users.filter(_.id == lift(id)))
     yield result.headOption
 
+  override def getAll: ZIO[Any, SQLException, List[BitBucketUserDB]] =
+    for result <- run(Schema.users)
+    yield result
+
   override def createOrUpdate(
       user: BitBucketUserDB
   ): ZIO[Any, SQLException, UUID] =

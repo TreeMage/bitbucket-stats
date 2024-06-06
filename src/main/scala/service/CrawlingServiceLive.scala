@@ -5,13 +5,13 @@ import client.BitbucketClient
 import model.RequestedCount
 import model.domain.BitBucketUser
 import model.domain.pullrequest.{PullRequest, PullRequestActivity}
-import model.response.BitBucketApiError
-import model.response.pullrequest.PullRequestState
 import repository.{
   BitBucketPullRequestActivityRepository,
   BitBucketPullRequestRepository,
   BitBucketUserRepository
 }
+import org.treemage.model.response.bitbucket.BitBucketApiError
+import org.treemage.model.response.bitbucket.pullrequest.PullRequestState
 
 import zio.*
 

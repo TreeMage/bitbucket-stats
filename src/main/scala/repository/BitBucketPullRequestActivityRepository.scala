@@ -9,6 +9,9 @@ import java.sql.SQLException
 
 trait BitBucketPullRequestActivityRepository:
   def getById(id: Int): ZIO[Any, SQLException, Option[BitBucketActivityDB]]
+  def getByPullRequestId(
+      pullRequestId: Int
+  ): ZIO[Any, SQLException, List[BitBucketActivityDB]]
   def create(
       pullRequestActivity: BitBucketActivityDBForInsert
   ): ZIO[Any, SQLException, Int]

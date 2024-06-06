@@ -3,9 +3,16 @@ package client
 
 import config.{ApplicationConfig, BitbucketConfig}
 import model.RequestedCount
-import model.response.BitBucketApiError
-import model.response.pullrequest.*
+import model.response.bitbucket.pullrequest.*
 
+import org.treemage.model.response.bitbucket.BitBucketApiError
+import org.treemage.model.response.bitbucket.pullrequest.{
+  BitBucketPullRequestResponse,
+  PullRequestActivityResponse,
+  PullRequestActivityResponseValueWrapper,
+  PullRequestResponse,
+  PullRequestState
+}
 import zio.*
 import zio.http.{Client, Header, MediaType, Request}
 import zio.schema.codec.BinaryCodec
@@ -98,11 +105,11 @@ private case class BitBucketClientLive(client: Client, config: BitbucketConfig)
     yield activities.flatMap(_.values)
 
 object BitBucketClientLive {
-  val layer: ZLayer[Client & ApplicationConfig, Nothing, BitbucketClient] =
+  val layer: ZLayer[Client & BitbucketConfig, Nothing, BitbucketClient] =
     ZLayer {
       for
         client <- ZIO.service[Client]
-        config <- ZIO.service[ApplicationConfig]
-      yield BitBucketClientLive(client, config.bitbucket)
+        config <- ZIO.service[BitbucketConfig]
+      yield BitBucketClientLive(client, config)
     }
 }

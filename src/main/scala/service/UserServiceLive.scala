@@ -14,6 +14,9 @@ case class UserServiceLive(userRepository: BitBucketUserRepository)
     for user <- userRepository.getById(id).orDie
     yield user.map(BitBucketUser.fromDB)
 
+  override def getAll: ZIO[Any, Nothing, List[BitBucketUser]] =
+    userRepository.getAll.orDie.map(_.map(BitBucketUser.fromDB))
+
   override def createOrUpdate(user: BitBucketUser): ZIO[Any, Nothing, UUID] =
     userRepository.createOrUpdate(user.toDB).orDie
 

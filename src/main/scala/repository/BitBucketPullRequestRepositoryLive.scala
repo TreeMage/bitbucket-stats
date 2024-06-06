@@ -19,6 +19,22 @@ case class BitBucketPullRequestRepositoryLive(quill: Quill.Postgres[SnakeCase])
     for result <- run(Schema.pullRequests.filter(_.id == lift(id)))
     yield result.headOption
 
+  override def getAll: ZIO[Any, SQLException, List[BitBucketPullRequestDB]] =
+    for result <- run(Schema.pullRequests.sortBy(_.createdAt)(Ord.desc))
+    yield result
+
+  override def getPaginated(
+      page: Index,
+      pageSize: Index
+  ): ZIO[Any, SQLException, List[BitBucketPullRequestDB]] =
+    for result <- run(
+        Schema.pullRequests
+          .sortBy(_.createdAt)(Ord.desc)
+          .drop(lift(page * pageSize))
+          .take(lift(pageSize))
+      )
+    yield result
+
   override def createOrUpdate(
       pullRequest: BitBucketPullRequestDB
   ): ZIO[Any, SQLException, Int] =
