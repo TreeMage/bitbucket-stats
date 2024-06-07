@@ -3,26 +3,22 @@ package service
 
 import client.BitbucketClient
 import model.RequestedCount
-import model.domain.BitBucketUser
+import model.domain.crawl.CrawlStatus
 import model.domain.pullrequest.{PullRequest, PullRequestActivity}
-import repository.{
-  BitBucketPullRequestActivityRepository,
-  BitBucketPullRequestRepository,
-  BitBucketUserRepository
-}
-import org.treemage.model.response.bitbucket.BitBucketApiError
-import org.treemage.model.response.bitbucket.pullrequest.PullRequestState
+import model.response.bitbucket.BitBucketApiError
+import model.response.bitbucket.pullrequest.PullRequestState
 
 import zio.*
 
 private type Dependencies = UserService & PullRequestService & ActivityService &
-  BitbucketClient
+  BitbucketClient & CrawlStateService
 
 case class CrawlingServiceLive(
     bitBucketUserService: UserService,
     bitBucketPullRequestService: PullRequestService,
     bitBucketPullRequestActivityService: ActivityService,
-    bitbucketClient: BitbucketClient
+    bitbucketClient: BitbucketClient,
+    crawlStateService: CrawlStateService
 ) extends CrawlingService:
 
   private def shouldRefetchActivities(
@@ -76,50 +72,71 @@ case class CrawlingServiceLive(
 
   override def fetchPullRequestActivityAndSave(
       state: Set[PullRequestState],
-      count: RequestedCount
+      count: RequestedCount,
+      providedCrawlId: Option[Int] = None
   ): ZIO[Scope, CrawlingError, Int] =
-    for
-      _ <- ZIO.logInfo(s"Fetching PRs with state $state and count $count")
-      prs <- bitbucketClient
-        .listPullRequests(state, count)
-        .mapError(CrawlingError.APIError.apply)
-      _ <- ZIO.logInfo(s"Found ${prs.length} PRs")
-      total <- ZIO
-        .foreachPar(prs) { prResponse =>
-          for
-            pr <- ZIO
-              .fromOption(PullRequest.fromAPIResponse(prResponse))
-              .orElse(
-                ZIO.fail(
-                  CrawlingError.MalformedAPIResponse(
-                    s"Failed to parse PR response $prResponse"
+    def execute(crawlId: Int) =
+      for
+        _ <- ZIO.logInfo(s"Fetching PRs with state $state and count $count")
+        _ <- crawlStateService.updateState(
+          crawlId,
+          CrawlStatus.FetchingPullRequests
+        )
+        prs <- bitbucketClient
+          .listPullRequests(state, count)
+          .mapError(CrawlingError.APIError.apply)
+        _ <- ZIO.logInfo(s"Found ${prs.length} PRs")
+        _ <- crawlStateService.updateState(
+          crawlId,
+          CrawlStatus.FetchingActivities
+        )
+        total <- ZIO
+          .foreachPar(prs) { prResponse =>
+            for
+              pr <- ZIO
+                .fromOption(PullRequest.fromAPIResponse(prResponse))
+                .orElse(
+                  ZIO.fail(
+                    CrawlingError.MalformedAPIResponse(
+                      s"Failed to parse PR response $prResponse"
+                    )
                   )
                 )
-              )
-            shouldRefetch <- shouldRefetchActivities(pr)
-            numberOfActivities <-
-              if shouldRefetch then
-                for
-                  _ <- ZIO.logInfo(
-                    s"Refetching activities for PR ${pr.id}"
-                  )
-                  _ <- bitBucketPullRequestActivityService
-                    .deleteByPullRequestId(pr.id)
-                  _ <- ZIO.logInfo(
-                    s"Fetching and saving activities for PR ${pr.id}"
-                  )
-                  numberOfActivities <- fetchAndSaveActivities(pr)
-                  _ <- ZIO.logInfo(
-                    s"Saved $numberOfActivities activities for PR ${pr.id}"
-                  )
-                yield numberOfActivities
-              else
-                ZIO.logInfo(
-                  s"Skipping PR ${pr.id} since it has not been updated since the last crawl"
-                ) *> ZIO.succeed(0)
-          yield numberOfActivities
-        }
-        .map(_.sum)
+              shouldRefetch <- shouldRefetchActivities(pr)
+              numberOfActivities <-
+                if shouldRefetch then
+                  for
+                    _ <- ZIO.logInfo(
+                      s"Refetching activities for PR ${pr.id}"
+                    )
+                    _ <- bitBucketPullRequestActivityService
+                      .deleteByPullRequestId(pr.id)
+                    _ <- ZIO.logInfo(
+                      s"Fetching and saving activities for PR ${pr.id}"
+                    )
+                    numberOfActivities <- fetchAndSaveActivities(pr)
+                    _ <- ZIO.logInfo(
+                      s"Saved $numberOfActivities activities for PR ${pr.id}"
+                    )
+                  yield numberOfActivities
+                else
+                  ZIO.logInfo(
+                    s"Skipping PR ${pr.id} since it has not been updated since the last crawl"
+                  ) *> ZIO.succeed(0)
+            yield numberOfActivities
+          }
+          .map(_.sum)
+      yield total
+
+    for
+      crawlId <- providedCrawlId.fold(crawlStateService.create)(ZIO.succeed(_))
+      total <- execute(crawlId).tapError(
+        crawlStateService
+          .updateState(crawlId, CrawlStatus.Failed)
+          *> ZIO.fail(_)
+      )
+      _ <- crawlStateService.updateState(crawlId, CrawlStatus.Succeeded)
+      _ <- crawlStateService.updateCrawledActivityCount(crawlId, total)
     yield total
 
 object CrawlingServiceLive:

@@ -1,13 +1,9 @@
 package org.treemage
 package repository
 
+import model.db.*
+
 import io.getquill.*
-import org.treemage.model.db.{
-  BitBucketActivityDB,
-  BitBucketActivityDBForInsert,
-  BitBucketPullRequestDB,
-  BitBucketUserDB
-}
 
 object Schema:
   inline def users: EntityQuery[BitBucketUserDB] =
@@ -16,3 +12,5 @@ object Schema:
     querySchema[BitBucketPullRequestDB]("bit_bucket_pull_requests")
   inline def activities: EntityQuery[BitBucketActivityDB] =
     querySchema[BitBucketActivityDB]("bit_bucket_activities")
+  inline def crawlStates: EntityQuery[CrawlStateDB] =
+    querySchema[CrawlStateDB]("crawl_states")
