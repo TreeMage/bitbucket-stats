@@ -1,0 +1,7 @@
+CREATE TABLE crawl_states (
+    id SERIAL PRIMARY KEY,
+    state TEXT NOT NULL,
+    total_activities_crawled INTEGER DEFAULT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

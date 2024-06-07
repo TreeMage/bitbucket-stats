@@ -1,15 +1,12 @@
 package org.treemage
 
 import api.activity.{ActivityApiHandler, ActivityApiLive}
+import api.crawl.{CrawlingApiHandler, CrawlingApiLive}
 import api.pullrequest.{PullRequestApiHandler, PullRequestApiLive}
 import api.users.{UserApiHandler, UserApiLive}
+import client.{BitBucketClientLive, BitbucketClient, HackHTTPClient}
 import config.ApplicationConfig
-import repository.{
-  BitBucketPullRequestActivityRepositoryLive,
-  BitBucketPullRequestRepositoryLive,
-  BitBucketUserRepositoryLive,
-  QuillLayer
-}
+import repository.*
 import service.*
 
 import zio.*
@@ -20,7 +17,8 @@ object ServerApp extends ZIOAppDefault:
   private val routes =
     UserApiHandler(UserApiLive).routes ++
       PullRequestApiHandler(PullRequestApiLive).routes ++
-      ActivityApiHandler(ActivityApiLive).routes
+      ActivityApiHandler(ActivityApiLive).routes ++
+      CrawlingApiHandler(CrawlingApiLive).routes
 
   private val config = ZLayer
     .fromZIO(
@@ -33,17 +31,24 @@ object ServerApp extends ZIOAppDefault:
     )
     .orDie
 
-  def run: URIO[Any, ExitCode] = Server
+  def run: ZIO[Any, Any, Any] = Server
     .serve(routes)
     .provide(
-      Server.default,
+      Scope.default,
+      Server.default.orDie,
+      HackHTTPClient.default.orDie,
       UserServiceLive.layer,
       PullRequestServiceLive.layer,
       ActivityServiceLive.layer,
+      CrawlingServiceLive.layer,
+      CrawlStateServiceLive.layer,
       BitBucketUserRepositoryLive.layer,
       BitBucketPullRequestRepositoryLive.layer,
       BitBucketPullRequestActivityRepositoryLive.layer,
+      CrawlStateRepositoryLive.layer,
+      BitBucketClientLive.layer,
       QuillLayer.live,
-      config.project(_.postgres)
+      config.project(_.postgres),
+      config.project(_.bitbucket)
     )
-    .exitCode
+    .debug

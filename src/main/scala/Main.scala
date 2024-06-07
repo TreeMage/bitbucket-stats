@@ -1,44 +1,15 @@
 package org.treemage
 
-import org.treemage.client.{BitBucketClientLive, BitbucketClient}
-import org.treemage.config.{ApplicationConfig, BitbucketConfig}
-import org.treemage.model.RequestedCount
-import org.treemage.model.response.bitbucket.pullrequest.{
-  PullRequestActivityResponse,
-  PullRequestState
-}
-import org.treemage.repository.{
-  BitBucketPullRequestActivityRepositoryLive,
-  BitBucketPullRequestRepositoryLive,
-  BitBucketUserRepositoryLive,
-  QuillLayer
-}
-import org.treemage.service.{
-  ActivityServiceLive,
-  CrawlingService,
-  CrawlingServiceLive,
-  PullRequestServiceLive,
-  UserServiceLive
-}
+import client.{BitBucketClientLive, BitbucketClient, HackHTTPClient}
+import config.ApplicationConfig
+import model.RequestedCount
+import model.response.bitbucket.pullrequest.PullRequestState
+import repository.*
+import service.*
+
 import zio.*
 import zio.config.typesafe.*
 import zio.http.*
-import zio.http.netty.NettyConfig
-
-import java.net.{InetAddress, UnknownHostException}
-
-// TODO: Remove this as soon as I figured out why ipv6 is not working
-private final case class CustomSystemResolver() extends DnsResolver {
-  override def resolve(
-      host: String
-  )(implicit trace: Trace): ZIO[Any, UnknownHostException, Chunk[InetAddress]] =
-    ZIO
-      .attemptBlocking(InetAddress.getAllByName(host))
-      // Hack to choose the first resolved address (which seems to be ipv4)
-      .map(_.take(1))
-      .refineToOrDie[UnknownHostException]
-      .map(Chunk.fromArray)
-}
 
 object Main extends ZIOAppDefault {
   private val configPath = "config/application.json"
@@ -53,11 +24,6 @@ object Main extends ZIOAppDefault {
       yield config
     )
     .orDie
-
-  private val client = (ZLayer.succeed(ZClient.Config.default) ++ ZLayer
-    .succeed(
-      NettyConfig.defaultWithFastShutdown
-    ) ++ ZLayer.succeed(CustomSystemResolver())) >>> Client.live
 
   private val app =
     for
@@ -75,13 +41,15 @@ object Main extends ZIOAppDefault {
       BitBucketUserRepositoryLive.layer,
       BitBucketPullRequestRepositoryLive.layer,
       BitBucketPullRequestActivityRepositoryLive.layer,
+      CrawlStateRepositoryLive.layer,
       UserServiceLive.layer,
       PullRequestServiceLive.layer,
       ActivityServiceLive.layer,
+      CrawlStateServiceLive.layer,
       QuillLayer.live,
       BitBucketClientLive.layer,
       CrawlingServiceLive.layer,
-      client,
+      HackHTTPClient.default,
       Scope.default
     )
 }
