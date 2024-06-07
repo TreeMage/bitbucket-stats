@@ -1,4 +1,6 @@
 TOKEN
+node_modules/
+.vite/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
