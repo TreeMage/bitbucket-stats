@@ -1,7 +1,7 @@
 package org.treemage
 package model.db
 
-import model.domain.crawl.{CrawlState, CrawlStatus}
+import shared.model.domain.crawl.{CrawlState, CrawlStatus}
 
 import io.getquill.MappedEncoding
 import zio.schema.{DeriveSchema, Schema}

@@ -1,8 +1,8 @@
 package org.treemage
 package model.response.api
 
-import org.treemage.model.domain.pullrequest.PullRequest
-import org.treemage.model.response.bitbucket.pullrequest.PullRequestState
+import shared.model.domain.pullrequest.{PullRequest, PullRequestState}
+
 import zio.schema.{DeriveSchema, Schema}
 
 import java.time.LocalDateTime
@@ -22,10 +22,10 @@ object PullRequestResponse:
 
   def fromDomain(pr: PullRequest): PullRequestResponse =
     PullRequestResponse(
-      id = pr.id,
-      title = pr.title,
-      state = pr.state,
-      createdAt = pr.createdAt,
-      updatedAt = pr.updatedAt,
-      authorId = pr.author.id
+      pr.id,
+      pr.title,
+      pr.state,
+      pr.createdAt,
+      pr.updatedAt,
+      pr.author.id
     )

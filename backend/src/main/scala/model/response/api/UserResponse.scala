@@ -1,7 +1,7 @@
 package org.treemage
 package model.response.api
 
-import model.domain.BitBucketUser
+import shared.model.domain.BitBucketUser
 
 import zio.schema.*
 

@@ -1,7 +1,7 @@
 package org.treemage
 package model.response.api
 
-import model.domain.crawl.{CrawlState, CrawlStatus}
+import shared.model.domain.crawl.{CrawlState, CrawlStatus}
 
 import zio.schema.*
 

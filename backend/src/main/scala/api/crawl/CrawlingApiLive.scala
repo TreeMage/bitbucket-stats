@@ -2,10 +2,10 @@ package org.treemage
 package api.crawl
 
 import model.RequestedCount
-import model.domain.crawl.CrawlState
 import model.response.api.CrawlStateResponse
-import model.response.bitbucket.pullrequest.PullRequestState
 import service.{CrawlStateService, CrawlingService}
+import shared.model.domain.crawl.CrawlState
+import shared.model.domain.pullrequest.PullRequestState
 
 import zio.*
 

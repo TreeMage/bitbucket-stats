@@ -1,7 +1,7 @@
 package org.treemage
 package service
 
-import model.domain.crawl.{CrawlState, CrawlStatus}
+import shared.model.domain.crawl.{CrawlState, CrawlStatus}
 
 import zio.*
 

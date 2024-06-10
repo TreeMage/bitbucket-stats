@@ -1,8 +1,9 @@
 package org.treemage
 package service
 
+import shared.model.domain.pullrequest.PullRequest
+
 import zio.*
-import model.domain.pullrequest.PullRequest
 
 trait PullRequestService:
   def getById(id: Int): ZIO[Any, Nothing, Option[PullRequest]]

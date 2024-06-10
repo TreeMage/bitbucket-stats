@@ -1,7 +1,7 @@
 package org.treemage
 package service
 
-import model.domain.pullrequest.PullRequestActivity
+import shared.model.domain.pullrequest.PullRequestActivity
 
 import zio.*
 

@@ -1,11 +1,12 @@
 package org.treemage
 package service
 
-import zio.*
-import model.domain.pullrequest.PullRequest
+import model.db.BitBucketPullRequestDB
+import model.db.BitBucketPullRequestDB.*
 import repository.BitBucketPullRequestRepository
+import shared.model.domain.pullrequest.PullRequest
 
-import org.treemage.model.db.BitBucketPullRequestDB
+import zio.*
 
 case class PullRequestServiceLive(
     pullRequestRepository: BitBucketPullRequestRepository,
@@ -17,7 +18,7 @@ case class PullRequestServiceLive(
     for
       user <- userService.getById(pr.authorId)
       parsedPr <- ZIO
-        .fromOption(user.flatMap(PullRequest.fromDB(pr, _)))
+        .fromOption(user.flatMap(pr.toDomain))
         .orDieWith(_ =>
           new RuntimeException(
             s"Failed to parse PullRequest ${pr.id} from DB"
@@ -51,7 +52,9 @@ case class PullRequestServiceLive(
   override def createOrUpdate(
       pullRequest: PullRequest
   ): ZIO[Any, Nothing, Int] =
-    pullRequestRepository.createOrUpdate(pullRequest.toDB).orDie
+    pullRequestRepository
+      .createOrUpdate(BitBucketPullRequestDB.fromDomain(pullRequest))
+      .orDie
 
 object PullRequestServiceLive:
   val layer: URLayer[

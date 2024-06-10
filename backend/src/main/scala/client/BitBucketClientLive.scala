@@ -3,16 +3,9 @@ package client
 
 import config.{ApplicationConfig, BitbucketConfig}
 import model.RequestedCount
-import model.response.bitbucket.pullrequest.*
+import model.response.bitbucket.*
+import shared.model.domain.pullrequest.PullRequestState
 
-import org.treemage.model.response.bitbucket.BitBucketApiError
-import org.treemage.model.response.bitbucket.pullrequest.{
-  BitBucketPullRequestResponse,
-  PullRequestActivityResponse,
-  PullRequestActivityResponseValueWrapper,
-  PullRequestResponse,
-  PullRequestState
-}
 import zio.*
 import zio.http.{Client, Header, MediaType, Request}
 import zio.schema.codec.BinaryCodec
