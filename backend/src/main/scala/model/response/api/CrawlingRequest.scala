@@ -2,7 +2,7 @@ package org.treemage
 package model.response.api
 
 import model.RequestedCount
-import model.response.bitbucket.pullrequest.PullRequestState
+import shared.model.domain.pullrequest.PullRequestState
 
 import zio.schema.{DeriveSchema, Schema}
 

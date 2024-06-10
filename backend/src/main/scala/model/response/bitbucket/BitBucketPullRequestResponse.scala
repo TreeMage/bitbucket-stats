@@ -1,5 +1,5 @@
 package org.treemage
-package model.response.bitbucket.pullrequest
+package model.response.bitbucket
 
 import zio.schema.*
 import zio.schema.codec.{BinaryCodec, JsonCodec}

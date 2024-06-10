@@ -2,7 +2,7 @@ package org.treemage
 package repository
 
 import model.db.CrawlStateDB
-import model.domain.crawl.CrawlStatus
+import shared.model.domain.crawl.CrawlStatus
 
 import io.getquill.*
 import io.getquill.jdbczio.Quill

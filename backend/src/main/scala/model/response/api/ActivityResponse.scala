@@ -1,13 +1,14 @@
 package org.treemage
 package model.response.api
 
-import org.treemage.model.db.ActivityType
-import org.treemage.model.domain.pullrequest
-import org.treemage.model.domain.pullrequest.PullRequestActivity
+import model.db.ActivityType
+import shared.model.domain.pullrequest
+import shared.model.domain.pullrequest.PullRequestActivity
+
+import zio.schema.*
 
 import java.time.LocalDateTime
 import java.util.UUID
-import zio.schema.*
 
 case class ActivityResponse(
     pullRequestId: Int,

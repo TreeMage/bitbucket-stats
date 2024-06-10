@@ -3,7 +3,7 @@ package service
 
 import model.RequestedCount
 import model.response.bitbucket.BitBucketApiError
-import model.response.bitbucket.pullrequest.PullRequestState
+import shared.model.domain.pullrequest.PullRequestState
 
 import zio.*
 

@@ -3,10 +3,16 @@ package service
 
 import client.BitbucketClient
 import model.RequestedCount
-import model.domain.crawl.CrawlStatus
-import model.domain.pullrequest.{PullRequest, PullRequestActivity}
-import model.response.bitbucket.BitBucketApiError
-import model.response.bitbucket.pullrequest.PullRequestState
+import model.response.bitbucket.{
+  BitBucketApiError,
+  PullRequestActivityResponseValueWrapper
+}
+import shared.model.domain.crawl.CrawlStatus
+import shared.model.domain.pullrequest.{
+  PullRequest,
+  PullRequestActivity,
+  PullRequestState
+}
 
 import zio.*
 
@@ -49,7 +55,7 @@ case class CrawlingServiceLive(
         .listPullRequestActivity(prId)
         .mapError(CrawlingError.APIError.apply)
         .map(
-          _.map(PullRequestActivity.fromAPIResponse)
+          _.map(PullRequestActivityResponseValueWrapper.toDomain)
         )
       parsed <- ZIO
         .attempt(activities.map(_.get))
@@ -94,7 +100,7 @@ case class CrawlingServiceLive(
           .foreachPar(prs) { prResponse =>
             for
               pr <- ZIO
-                .fromOption(PullRequest.fromAPIResponse(prResponse))
+                .fromOption(prResponse.toDomain)
                 .orElse(
                   ZIO.fail(
                     CrawlingError.MalformedAPIResponse(

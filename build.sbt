@@ -13,7 +13,7 @@ lazy val zioDependencies = Seq(
   "dev.zio" %% "zio-config" % "4.0.2",
   "dev.zio" %% "zio-config-magnolia" % "4.0.2",
   "dev.zio" %% "zio-config-typesafe" % "4.0.2",
-  "dev.zio" %% "zio-schema" % "1.1.1",
+  "dev.zio" %% "zio-schema" % "1.2.0",
   "dev.zio" %% "zio-schema-json" % "1.2.0",
   "io.getquill" %% "quill-jdbc" % "4.8.4",
   "io.getquill" %% "quill-jdbc-zio" % "4.8.4",
@@ -47,5 +47,10 @@ lazy val frontend = (project in file("frontend"))
 lazy val shared = (project in file("shared"))
   .settings(commonSettings)
   .settings(
-    name := "bitbucket-stats-shared"
+    name := "bitbucket-stats-shared",
+    libraryDependencies ++= Seq(
+      "dev.zio" %% "zio-schema" % "1.2.0",
+      "dev.zio" %% "zio-schema-derivation" % "1.2.0",
+      "io.getquill" %% "quill-jdbc" % "4.8.4"
+    )
   )

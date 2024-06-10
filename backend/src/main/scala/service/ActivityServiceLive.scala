@@ -1,10 +1,10 @@
 package org.treemage
 package service
 
-import model.domain.pullrequest.PullRequestActivity
+import model.db.BitBucketActivityDB
 import repository.BitBucketPullRequestActivityRepository
+import shared.model.domain.pullrequest.PullRequestActivity
 
-import org.treemage.model.db.BitBucketActivityDB
 import zio.*
 
 case class ActivityServiceLive(
@@ -24,7 +24,7 @@ case class ActivityServiceLive(
             s"Failed to parse activity ${activity.id} from DB to due missing author"
           )
         )
-    yield PullRequestActivity.fromDB(activity, user)
+    yield activity.toDomain(user)
 
   override def getById(
       id: Int
@@ -47,7 +47,9 @@ case class ActivityServiceLive(
   override def create(
       pullRequestActivity: PullRequestActivity
   ): ZIO[Any, Nothing, Int] =
-    activityRepository.create(pullRequestActivity.toDB).orDie
+    activityRepository
+      .create(BitBucketActivityDB.fromDomain(pullRequestActivity))
+      .orDie
 
   override def deleteByPullRequestId(
       pullRequestId: Int

@@ -3,9 +3,9 @@ package org.treemage
 import client.{BitBucketClientLive, BitbucketClient, HackHTTPClient}
 import config.ApplicationConfig
 import model.RequestedCount
-import model.response.bitbucket.pullrequest.PullRequestState
 import repository.*
 import service.*
+import shared.model.domain.pullrequest.PullRequestState
 
 import zio.*
 import zio.config.typesafe.*

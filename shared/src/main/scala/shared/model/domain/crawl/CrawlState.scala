@@ -1,5 +1,5 @@
 package org.treemage
-package model.domain.crawl
+package shared.model.domain.crawl
 
 import java.time.LocalDateTime
 

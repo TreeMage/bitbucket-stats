@@ -3,8 +3,8 @@ package api.crawl
 
 import model.RequestedCount
 import model.response.api.{CrawlIdResponse, CrawlStateResponse}
-import model.response.bitbucket.pullrequest.PullRequestState
 import service.{CrawlStateService, CrawlingService}
+import shared.model.domain.pullrequest.PullRequestState
 
 import zio.*
 import zio.http.*
