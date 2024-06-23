@@ -1,8 +1,8 @@
 package org.treemage
 package api.activity
 
-import model.response.api.ActivityResponse
 import service.ActivityService
+import org.treemage.shared.model.api.ActivityResponse
 
 import zio.*
 

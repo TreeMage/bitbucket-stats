@@ -1,7 +1,8 @@
 package org.treemage
-package api.pullrequest
+package shared.api.pullrequest
 
-import org.treemage.model.response.api.PullRequestResponse
+import shared.model.api.PullRequestResponse
+
 import zio.*
 import zio.http.*
 import zio.http.codec.QueryCodec

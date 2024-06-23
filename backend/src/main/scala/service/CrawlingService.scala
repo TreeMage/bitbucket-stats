@@ -1,9 +1,9 @@
 package org.treemage
 package service
 
-import model.RequestedCount
 import model.response.bitbucket.BitBucketApiError
 import shared.model.domain.pullrequest.PullRequestState
+import org.treemage.shared.model.RequestedCount
 
 import zio.*
 

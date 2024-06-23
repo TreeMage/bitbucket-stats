@@ -2,10 +2,10 @@ package org.treemage
 
 import client.{BitBucketClientLive, BitbucketClient, HackHTTPClient}
 import config.ApplicationConfig
-import model.RequestedCount
 import repository.*
 import service.*
 import shared.model.domain.pullrequest.PullRequestState
+import org.treemage.shared.model.RequestedCount
 
 import zio.*
 import zio.config.typesafe.*

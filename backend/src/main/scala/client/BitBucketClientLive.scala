@@ -2,9 +2,9 @@ package org.treemage
 package client
 
 import config.{ApplicationConfig, BitbucketConfig}
-import model.RequestedCount
 import model.response.bitbucket.*
 import shared.model.domain.pullrequest.PullRequestState
+import org.treemage.shared.model.RequestedCount
 
 import zio.*
 import zio.http.{Client, Header, MediaType, Request}

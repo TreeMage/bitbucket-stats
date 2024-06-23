@@ -3,7 +3,8 @@ package api.users
 
 import service.UserService
 
-import org.treemage.model.response.api.UserResponse
+import org.treemage.shared.api.users.UserApiError
+import org.treemage.shared.model.api.UserResponse
 import zio.*
 
 import java.util.UUID

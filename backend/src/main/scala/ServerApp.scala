@@ -31,11 +31,14 @@ object ServerApp extends ZIOAppDefault:
     )
     .orDie
 
+  private val server =
+    ZLayer.succeed(Server.Config.default.port(5000)) >>> Server.live
+
   def run: ZIO[Any, Any, Any] = Server
     .serve(routes)
     .provide(
       Scope.default,
-      Server.default.orDie,
+      server.orDie,
       HackHTTPClient.default.orDie,
       UserServiceLive.layer,
       PullRequestServiceLive.layer,

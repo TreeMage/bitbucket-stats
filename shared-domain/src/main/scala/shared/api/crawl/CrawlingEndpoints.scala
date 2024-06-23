@@ -1,7 +1,7 @@
 package org.treemage
-package api.crawl
+package shared.api.crawl
 
-import model.response.api.{CrawlIdResponse, CrawlStateResponse, CrawlingRequest}
+import shared.model.api.{CrawlIdResponse, CrawlStateResponse, CrawlingRequest}
 
 import zio.http.codec.PathCodec.*
 import zio.http.endpoint.Endpoint

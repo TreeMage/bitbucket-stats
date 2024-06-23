@@ -2,7 +2,6 @@ package org.treemage
 package service
 
 import client.BitbucketClient
-import model.RequestedCount
 import model.response.bitbucket.{
   BitBucketApiError,
   PullRequestActivityResponseValueWrapper
@@ -13,6 +12,7 @@ import shared.model.domain.pullrequest.{
   PullRequestActivity,
   PullRequestState
 }
+import org.treemage.shared.model.RequestedCount
 
 import zio.*
 

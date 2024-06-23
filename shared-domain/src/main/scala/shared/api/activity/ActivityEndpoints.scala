@@ -1,7 +1,7 @@
 package org.treemage
-package api.activity
+package shared.api.activity
 
-import model.response.api.ActivityResponse
+import shared.model.api.ActivityResponse
 
 import zio.http.*
 import zio.http.endpoint.*

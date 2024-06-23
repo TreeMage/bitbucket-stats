@@ -20,13 +20,16 @@ lazy val zioDependencies = Seq(
   "org.postgresql" % "postgresql" % "42.7.3"
 )
 
+lazy val root = (project in file("."))
+  .aggregate(backend, frontend, shared.jvm, shared.js)
+
 lazy val backend = (project in file("backend"))
   .settings(commonSettings)
   .settings(
     name := "bitbucket-stats-backend",
     libraryDependencies ++= zioDependencies
   )
-  .dependsOn(shared)
+  .dependsOn(shared.jvm)
 
 lazy val frontend = (project in file("frontend"))
   .enablePlugins(ScalaJSPlugin)
@@ -37,20 +40,31 @@ lazy val frontend = (project in file("frontend"))
     scalaJSLinkerConfig ~= {
       _.withModuleKind(ModuleKind.ESModule)
         .withModuleSplitStyle(
-          ModuleSplitStyle.SmallModulesFor(List("bitbucket-stats-frontend"))
+          ModuleSplitStyle.SmallModulesFor(List("org.treemage"))
         )
     },
-    libraryDependencies += "org.scala-js" %%% "scalajs-dom" % "2.4.0"
-  )
-  .dependsOn(shared)
-
-lazy val shared = (project in file("shared"))
-  .settings(commonSettings)
-  .settings(
-    name := "bitbucket-stats-shared",
     libraryDependencies ++= Seq(
-      "dev.zio" %% "zio-schema" % "1.2.0",
-      "dev.zio" %% "zio-schema-derivation" % "1.2.0",
-      "io.getquill" %% "quill-jdbc" % "4.8.4"
+      "org.scala-js" %%% "scalajs-dom" % "2.4.0",
+      "com.raquo" %%% "laminar" % "17.0.0",
+      "dev.zio" %%% "zio" % "2.1.1",
+      "dev.zio" %%% "zio-http" % "3.0.0-RC7"
     )
   )
+  .dependsOn(shared.js)
+
+lazy val shared = // (project in file("shared"))
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Pure)
+    .in(file("shared-domain"))
+    .enablePlugins(ScalaJSPlugin)
+    .settings(commonSettings)
+    .settings(
+      name := "bitbucket-stats-shared",
+      libraryDependencies ++= Seq(
+        "dev.zio" %% "zio" % "2.1.1",
+        "dev.zio" %% "zio-schema" % "1.2.0",
+        "dev.zio" %% "zio-schema-derivation" % "1.2.0",
+        "dev.zio" %% "zio-http" % "3.0.0-RC7",
+        "io.getquill" %% "quill-jdbc" % "4.8.4"
+      )
+    )

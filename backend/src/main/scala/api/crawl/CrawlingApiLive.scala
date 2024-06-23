@@ -1,12 +1,11 @@
 package org.treemage
 package api.crawl
 
-import model.RequestedCount
-import model.response.api.CrawlStateResponse
 import service.{CrawlStateService, CrawlingService}
 import shared.model.domain.crawl.CrawlState
 import shared.model.domain.pullrequest.PullRequestState
-
+import org.treemage.shared.model.RequestedCount
+import org.treemage.shared.model.api.CrawlStateResponse
 import zio.*
 
 case object CrawlingApiLive extends CrawlingApi:

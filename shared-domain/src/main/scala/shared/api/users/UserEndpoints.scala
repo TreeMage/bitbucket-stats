@@ -1,8 +1,7 @@
 package org.treemage
-package api.users
+package shared.api.users
 
-import model.response.api.UserResponse
-import service.UserService
+import shared.model.api.UserResponse
 
 import zio.*
 import zio.http.*

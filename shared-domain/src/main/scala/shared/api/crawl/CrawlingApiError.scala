@@ -1,5 +1,5 @@
 package org.treemage
-package api.crawl
+package shared.api.crawl
 
 import zio.schema.*
 

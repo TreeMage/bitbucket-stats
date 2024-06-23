@@ -1,5 +1,5 @@
 package org.treemage
-package api.pullrequest
+package shared.api.pullrequest
 
 import zio.schema.{DeriveSchema, Schema}
 

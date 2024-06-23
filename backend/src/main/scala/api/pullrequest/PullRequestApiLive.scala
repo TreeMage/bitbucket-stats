@@ -1,8 +1,9 @@
 package org.treemage
 package api.pullrequest
 
-import org.treemage.model.response.api.PullRequestResponse
 import org.treemage.service.PullRequestService
+import org.treemage.shared.api.pullrequest.PullRequestApiError
+import org.treemage.shared.model.api.PullRequestResponse
 import zio.*
 
 case object PullRequestApiLive extends PullRequestApi:

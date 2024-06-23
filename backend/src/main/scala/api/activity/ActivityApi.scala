@@ -4,8 +4,8 @@ package api.activity
 import zio.*
 import zio.http.*
 import service.ActivityService
-
-import org.treemage.model.response.api.ActivityResponse
+import org.treemage.shared.api.activity.ActivityEndpoints
+import org.treemage.shared.model.api.ActivityResponse
 
 trait ActivityApi:
   def getByPullRequestId(

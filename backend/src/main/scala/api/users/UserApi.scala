@@ -1,9 +1,10 @@
 package org.treemage
 package api.users
 
-import model.response.api.UserResponse
 import service.UserService
 
+import org.treemage.shared.api.users.{UserApiError, UserEndpoints}
+import org.treemage.shared.model.api.UserResponse
 import zio.*
 import zio.http.codec.PathCodec.*
 import zio.http.{Handler, Route, Routes}

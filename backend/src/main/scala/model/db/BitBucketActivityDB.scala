@@ -2,35 +2,12 @@ package org.treemage
 package model.db
 
 import shared.model.domain.BitBucketUser
-import shared.model.domain.pullrequest.PullRequestActivity
+import shared.model.domain.pullrequest.{ActivityType, PullRequestActivity}
 
 import io.getquill.MappedEncoding
 
 import java.time.LocalDateTime
 import java.util.UUID
-
-enum ActivityType:
-  case Approval
-  case Comment
-  case Update
-
-object ActivityType:
-  given MappedEncoding[String, ActivityType] = MappedEncoding(parse(_).get)
-  given MappedEncoding[ActivityType, String] = MappedEncoding(_.asString)
-
-  def parse(activityType: String): Option[ActivityType] =
-    activityType.toLowerCase match
-      case "approval" => Some(Approval)
-      case "comment"  => Some(Comment)
-      case "update"   => Some(Update)
-      case _          => None
-
-  extension (self: ActivityType)
-    def asString: String =
-      self match
-        case Approval => "approval"
-        case Comment  => "comment"
-        case Update   => "update"
 
 trait BitBucketActivityDBContent(
     pullRequestId: Int,

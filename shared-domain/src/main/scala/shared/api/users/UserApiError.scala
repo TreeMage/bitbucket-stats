@@ -1,5 +1,5 @@
 package org.treemage
-package api.users
+package shared.api.users
 
 import zio.schema.*
 

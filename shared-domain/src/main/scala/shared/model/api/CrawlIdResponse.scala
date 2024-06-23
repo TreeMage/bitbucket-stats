@@ -1,5 +1,5 @@
 package org.treemage
-package model.response.api
+package shared.model.api
 
 import zio.schema.*
 

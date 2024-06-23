@@ -1,5 +1,5 @@
 package org.treemage
-package model
+package shared.model
 
 enum RequestedCount:
   case Fixed(count: Int)

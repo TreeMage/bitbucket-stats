@@ -1,11 +1,12 @@
 package org.treemage
 package api.crawl
 
-import model.RequestedCount
-import model.response.api.{CrawlIdResponse, CrawlStateResponse}
-import service.{CrawlStateService, CrawlingService}
+import shared.api.crawl.{CrawlingApiError, CrawlingEndpoints}
+import shared.model.RequestedCount
+import shared.model.api.{CrawlIdResponse, CrawlStateResponse}
 import shared.model.domain.pullrequest.PullRequestState
 
+import org.treemage.service.{CrawlStateService, CrawlingService}
 import zio.*
 import zio.http.*
 
@@ -26,20 +27,22 @@ case class CrawlingApiHandler(api: CrawlingApi):
         getCrawlState
       )
     )
-  def crawl = CrawlingEndpoints.crawl.implement(
-    Handler.fromFunctionZIO { req =>
-      for crawlId <- api.crawl(req.state, req.count)
-      yield CrawlIdResponse(crawlId)
-    }
-  )
+  def crawl: Route[CrawlingService & CrawlStateService & Scope, Nothing] =
+    CrawlingEndpoints.crawl.implement(
+      Handler.fromFunctionZIO { req =>
+        for crawlId <- api.crawl(req.state, req.count)
+        yield CrawlIdResponse(crawlId)
+      }
+    )
 
-  def getCrawlState = CrawlingEndpoints.state.implement(
-    Handler.fromFunctionZIO { id =>
-      for
-        maybeState <- api.getCrawlState(id)
-        state <- ZIO
-          .fromOption(maybeState)
-          .mapError(_ => CrawlingApiError.NotFound(id))
-      yield state
-    }
-  )
+  def getCrawlState: Route[CrawlStateService, Nothing] =
+    CrawlingEndpoints.state.implement(
+      Handler.fromFunctionZIO { id =>
+        for
+          maybeState <- api.getCrawlState(id)
+          state <- ZIO
+            .fromOption(maybeState)
+            .mapError(_ => CrawlingApiError.NotFound(id))
+        yield state
+      }
+    )

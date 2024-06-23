@@ -1,9 +1,8 @@
 package org.treemage
-package model.response.api
+package shared.model.api
 
-import model.db.ActivityType
 import shared.model.domain.pullrequest
-import shared.model.domain.pullrequest.PullRequestActivity
+import shared.model.domain.pullrequest.{ActivityType, PullRequestActivity}
 
 import zio.schema.*
 
